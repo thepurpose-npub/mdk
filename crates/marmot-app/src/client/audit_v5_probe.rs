@@ -99,7 +99,7 @@ impl TransportPeeler for ProbePeeler {
                 .await
                 .and_then(|(peeled, provenance)| {
                     // The caller holds the account policy lock through admission and
-                    // projection. Only an authenticated Welcome is an invitation.
+                    // projection. Recovery is account control, never an invitation.
                     if matches!(&peeled.content, cgka_traits::PeeledContent::Welcome { .. }) {
                         let sender = peeled
                             .sender
@@ -126,9 +126,11 @@ impl TransportPeeler for ProbePeeler {
         let mut slot = self.slot.lock().unwrap();
         if let Some((id, receive_id, outer)) = slot.armed.take()
             && id == msg.id.as_slice()
+            && !matches!(&result, Ok((peeled, _))
+                if matches!(&peeled.content, cgka_traits::PeeledContent::GroupRecovery { .. }))
         {
             let (outcome, reason, provenance) = match &result {
-                Ok((_, provenance)) => (UnwrapResult::Validated, None, Some(provenance.clone())),
+                Ok((_, provenance)) => (UnwrapResult::Validated, None, provenance.clone()),
                 Err(error) => {
                     let (outcome, reason) = match error {
                         PeelerError::WrongRecipient => {
@@ -163,6 +165,14 @@ impl TransportPeeler for ProbePeeler {
             });
         }
         result.map(|(peeled, _)| peeled)
+    }
+
+    async fn wrap_group_recovery(
+        &self,
+        message: &cgka_traits::GroupRecoveryMessage,
+        recipient: &MemberId,
+    ) -> Result<TransportMessage, PeelerError> {
+        self.inner.wrap_group_recovery(message, recipient).await
     }
 
     async fn wrap_group_message(
