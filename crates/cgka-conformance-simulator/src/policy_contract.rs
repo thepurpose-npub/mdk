@@ -40,7 +40,7 @@ pub struct ConstantDecision {
     pub versioning: VersioningRule,
 }
 
-pub const CONSTANT_DECISIONS: [ConstantDecision; 40] = [
+pub const CONSTANT_DECISIONS: [ConstantDecision; 41] = [
     decision(
         "P1",
         ConstantInfluence::SelectedStateSemantic,
@@ -248,6 +248,12 @@ pub const CONSTANT_DECISIONS: [ConstantDecision; 40] = [
     decision(
         "A18",
         ConstantInfluence::InputAcquisition,
+        VersioningRule::OperationalNonInterference,
+    ),
+    // Recovery admission never authorizes a usable fork replacement.
+    decision(
+        "A19",
+        ConstantInfluence::OperationalResource,
         VersioningRule::OperationalNonInterference,
     ),
 ];

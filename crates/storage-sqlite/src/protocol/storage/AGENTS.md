@@ -23,6 +23,7 @@ Map for Marmot engine-side SQLite tables (the `cgka_traits` storage traits). App
 | `deferred_peel_generations.rs` | `DeferredPeelGenerationStorage`: deferred-peel generation barriers. |
 | `leave_requests.rs`, `disband_requests.rs` | Durable leave and disband requests (plus disband candidates/tombstones). |
 | `maintenance.rs` | `MaintenanceStorage`: maintenance and publication-recovery records. |
+| `group_recovery.rs` | Bounded authenticated recovery jobs in `cgka_group_rejoin`, including exact outbound artifacts and retry evidence. |
 
 ## Rules
 

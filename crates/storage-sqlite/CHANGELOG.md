@@ -4,6 +4,11 @@
 
 ### Breaking changes
 
+- Migration 0130 advances account storage to schema 130 after migration 0129.
+  It adds the protocol-owned `cgka_group_rejoin` journal, with one recipient
+  job per group and bounded coordinator jobs. Capacity refusals preserve
+  existing work; group deletion cascades to its recovery jobs. Older binaries
+  reject the upgraded database.
 - Migration 0129 advances account storage to schema 129 (mdk#2628 item 3.3b).
   It adds `cgka_device_group_welcome_expectations`, one row per device group a
   confirmed link waits to join: the sender leaf's signature key and the end of
