@@ -21,9 +21,10 @@ Versions track the workspace version; releases are tagged `marmotc-v<version>`.
 
 - Append `MARMOT_STATUS_GROUP_RECOVERY_UNSETTLED` (111) and
   `MARMOT_STATUS_GROUP_RECOVERY_SOURCE_MISMATCH` (112), preserving all previous
-  status values. The first waits for a settled source; the second restarts the
-  authenticated challenge rather than retrying the same grant. Use matching
-  regenerated headers and libraries.
+  status values. The first waits for source evolution or local recovery-state
+  synchronization. The second refuses ineligible or stale recovery authority:
+  recheck local eligibility before obtaining another challenge, rather than
+  retrying the same grant. Use matching regenerated headers and libraries.
 
 - `marmot_linked_devices` writes this account's own devices as a
   `MarmotLinkedDeviceList` (free with `marmot_linked_device_list_free`), from
