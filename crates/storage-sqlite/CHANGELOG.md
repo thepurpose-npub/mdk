@@ -4,6 +4,15 @@
 
 ### Breaking changes
 
+- Migration 0129 advances account storage to schema 129 (mdk#2628 item 3.2).
+  It adds `account_sign_ins`, one row per KeyPackage slot of the account that
+  this device found and does not recognize: whether this device's first check
+  found it, its client name, when it appeared and last published, its newest
+  KeyPackage, whether it is still signed in, and this device's answer, with a
+  rejection's KeyPackage and whether the device group's roster records it yet.
+  `account_sign_in_baseline` holds when the first check ran. `SqliteAppStorage`
+  gains `record_sign_in_check`, `sign_ins`, `sign_in`, `answer_sign_in`,
+  `settle_sign_in_rejection` and `sign_in_baseline`.
 - Migration 0128 advances account storage to schema 128 (mdk#2660 phase 4).
   It adds `route_state` to `account_delivery_loss_evidence`, which existing
   rows leave 0, and `account_delivery_loss_evidence_routes`: the routes a loss

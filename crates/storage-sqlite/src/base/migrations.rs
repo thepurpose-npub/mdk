@@ -271,6 +271,9 @@ mod migration_0127_recovery_units;
 #[path = "migrations/0128_loss_evidence_routes.rs"]
 mod migration_0128_loss_evidence_routes;
 
+#[path = "migrations/0129_account_sign_ins.rs"]
+mod migration_0129_account_sign_ins;
+
 #[path = "migrations/0082_deletion_provenance.rs"]
 mod migration_0082_deletion_provenance;
 
@@ -1058,6 +1061,12 @@ const MIGRATIONS: &[Migration] = &[
         name: "0128_loss_evidence_routes",
         suspend_foreign_keys: &[],
         apply: migration_0128_loss_evidence_routes::apply,
+    },
+    Migration {
+        version: 129,
+        name: "0129_account_sign_ins",
+        suspend_foreign_keys: &[],
+        apply: migration_0129_account_sign_ins::apply,
     },
 ];
 

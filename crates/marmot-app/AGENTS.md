@@ -76,6 +76,16 @@ Implement shared behavior here, following [MDK's host boundary](../../docs/marmo
   opens with it set: a client dropped before a drain (a reconnect attempt whose transport fails) takes its change with
   it, and its replacement cannot see that change. Startup and reconnect settle trust with no command after them, so a
   new seam that settles trust must reach one of those two.
+- New sign-ins (`src/client/sign_ins.rs`, mdk#2628 3.2) count only what `read_account_key_package_slots` keeps under
+  the inviter's rules; a live KeyPackage from the directory subscription only brings a check forward
+  (`SignInNudges`). The first check's baseline, never a publication time, separates devices that were here first from
+  new sign-ins. Rejections are recorded locally first, then committed to the trusted roster only while the device
+  group is quiet (`device_group_quiet`); a device with no device group keeps them until `create_device_group` founds
+  the roster with them or it trusts a group it joined. A slot the roster holds as a device is never rejected here.
+  A rejection stays pending until the roster shows it, and a superseded roster update re-arms every rejection
+  (`note_superseded_intent_reports`). A slot is its `d` as published, compared as bytes; one the roster cannot name is
+  rejected on this device only. A KeyPackage this device made or the roster announces is never rejected
+  (`protected_key_package`): the account key can copy it into any slot.
 - Keep group DTOs, component projections, and group event projection helpers in `src/groups.rs`.
   `AppCreateGroupOptions::relays` overrides founding group routing only; validate through `RelaySafetyPolicy`
   before member resolution or group mutation, and preserve app-configured relays when omitted.

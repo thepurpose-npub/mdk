@@ -116,6 +116,7 @@ pub use app::recovery_units::{
     RecoveryRelayHealth, RecoverySpanRetirement, RecoveryUnit, RecoveryUnitBreak,
     RecoveryUnitOutcome, RecoveryUnitPark, RecoveryUnitPolicy, RecoveryUnitSpan, RecoveryUnitState,
 };
+pub use app::sign_ins::{ObservedSignIn, SignInAnswer, SignInCheck, SignInRecord};
 pub use app::timeline::{
     BRANCH_SELECTION_WITHDRAWAL_REASON, BranchSelectionWithdrawalDivergence,
     ConversationAccountSnapshot, ConversationAnchor, ConversationOpenAnchorOutcome,
