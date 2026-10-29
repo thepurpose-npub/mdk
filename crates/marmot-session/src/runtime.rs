@@ -1,6 +1,9 @@
 //! Account-device runtime: drives session effects through transport publish,
 //! confirmation, and rollback, and the effect aggregates it produces.
 
+mod group_recovery;
+pub use group_recovery::GroupRejoinStatus;
+
 /// Closed timing boundaries; callbacks receive no delivery or identity data.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum AccountIngestPhase {
@@ -485,6 +488,7 @@ pub struct AccountDeviceRuntime<A, R = StaticTransportRouting, K = NoopKeyPackag
     /// error. Never set by production code.
     finish_stage_failure: Option<cgka_traits::MessageId>,
     publication_progress: PublicationProgressSlot,
+    recovery_turn: Vec<storage_sqlite::GroupRecoveryRecord>,
 }
 
 impl<A, R, K> AccountDeviceRuntime<A, R, K>
@@ -546,6 +550,7 @@ where
             detached_welcome_publishes: HashSet::new(),
             finish_stage_failure: None,
             publication_progress: Arc::new(std::sync::Mutex::new(None)),
+            recovery_turn: Vec::new(),
         }
     }
 
@@ -3887,7 +3892,23 @@ where
             return Err(AccountError::WrongAccountDelivery);
         }
         let started = Instant::now();
-        let ingested = self.session.ingest_delivery(delivery).await;
+        let ingested = match self.session.ingest_delivery(delivery).await {
+            Ok(IngestEffects {
+                outcome: IngestOutcome::GroupRecovery { recovery },
+                ..
+            }) => {
+                let ingested = self
+                    .ingest_group_recovery(&delivery.message, *recovery)
+                    .await;
+                observe(
+                    AccountIngestPhase::Engine,
+                    started.elapsed(),
+                    ingested.is_ok(),
+                );
+                return ingested;
+            }
+            ingested => ingested,
+        };
         observe(
             AccountIngestPhase::Engine,
             started.elapsed(),

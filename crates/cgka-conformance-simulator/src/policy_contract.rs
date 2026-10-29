@@ -250,7 +250,7 @@ pub const CONSTANT_DECISIONS: [ConstantDecision; 41] = [
         ConstantInfluence::InputAcquisition,
         VersioningRule::OperationalNonInterference,
     ),
-    // Recovery admission never authorizes a usable fork replacement.
+    // Recovery admission and pacing never authorize a usable fork replacement.
     decision(
         "A19",
         ConstantInfluence::OperationalResource,

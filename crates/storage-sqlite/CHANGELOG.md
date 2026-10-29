@@ -12,6 +12,11 @@
   evidence intact. Same-job phase, retry and source refreshes remain writable.
   Group deletion cascades to its recovery jobs. Older binaries reject the
   upgraded database.
+  Runtime ownership retains exact publication artifacts and per-member Commit
+  cooldowns. Separate native and authenticated remote epoch baselines allow a
+  taller losing copy to rejoin. A durable one-shot remote rearm caps each
+  episode at 64 reservations between native/admin changes or explicit retry.
+  Nonce rotation clears remote-only height claims, not cost or the spent refill.
 - Migration 0129 advances account storage to schema 129 (mdk#2628 item 3.3b).
   It adds `cgka_device_group_welcome_expectations`, one row per device group a
   confirmed link waits to join: the sender leaf's signature key and the end of
