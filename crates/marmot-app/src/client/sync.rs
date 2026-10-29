@@ -5800,6 +5800,10 @@ impl AppClient {
                 self.delivery_loss_blocks_cursor(),
             ));
         }
+        // Explicit host Repair is user authorization for one new finite
+        // replacement-Welcome episode; the runtime alone mutates its journal.
+        self.retry_parked_rejoins()
+            .map_err(|error| state_persist(SyncSummary::default(), error))?;
         if self
             .refresh_sync_routes()
             .map_err(|error| state_persist(SyncSummary::default(), error))?

@@ -42,7 +42,7 @@ the default.
   session or engine crates.
 - Reserves authenticated Unrecoverable rejoin work through `prepare_group_recovery`; the host resolves only the
   returned members' safe inbox routes, then calls `advance_group_recovery` on the same runtime. Retry reservations
-  and publication continuation are durable. The host drives this loop; see the
+  and publication continuation are durable. `MarmotAppRuntime` drives this loop automatically; see the
   [rejoin contract](../../docs/marmot-architecture/invitation-recovery.md#automatic-rejoin-of-an-unrecoverable-copy).
 
 ## What the session does

@@ -77,7 +77,7 @@ bounds. Protocol bootstrap trust is documented in the canonical specification's
 
 ## Automatic rejoin of an Unrecoverable copy
 
-The runtime can request a fresh group copy when both the durable group record and native epoch
+The account worker automatically requests a fresh group copy when both the durable group record and native epoch
 state are `Unrecoverable`. The account signer, persisted MLS device signer and frozen local copy must remain
 available. A recovery warning, unreadable message, higher peer epoch or incoming request never creates this authority.
 Usable forks still require the explicit rejoin consent described above. Removed, leaving, disbanding and disbanded
@@ -171,14 +171,15 @@ legacy group. A recipient whose fresh KeyPackages use a different profile skips 
 Quarantined group records retire their stale recipient jobs without blocking recovery in other groups.
 Restored coordinators hydrate their group before advancing a retained Challenge or Grant.
 
-Rust hosts drive `prepare_group_recovery`, resolve only
+`MarmotAppRuntime` drives this automatically. Lower-level Rust hosts drive `prepare_group_recovery`, resolve only
 the returned members' safe inbox routes, then call `advance_group_recovery` in their existing account loop. Both
 methods belong to the same runtime owner; preparation durably reserves each turn before cancellable lookup work.
 Hosts can read `group_rejoin_status` as `Inactive`, `Pending { attempts }` or `Parked { attempts }`. A parked episode
-lets a host ask the user to retry or request an admin re-add.
+raises the existing app recovery-failure signal so a host can ask the user to retry or request an admin re-add.
 `retry_group_rejoin` explicitly starts a new budget only for an eligible Unrecoverable copy; it grants no authority
 to overwrite a usable copy. It clears the remote epoch high-water mark and restores the one-shot permission, so a
 dishonest coordinator cannot poison every later user-authorized episode. An unexpired grant retains its nonce,
-selected coordinator and exact signed artifact: Retry does not create a second live authorization.
-A withdrawn coordinator publication that expires or loses eligibility retires its commit link; the retained
+selected coordinator and exact signed artifact: Retry does not create a second live authorization. The app's existing
+Repair action uses that runtime-owned
+path. A withdrawn coordinator publication that expires or loses eligibility retires its commit link; the retained
 cooldown row cannot continually reschedule it.

@@ -30,6 +30,15 @@
   3.4), so hosts can tell the user before inviters stop treating the device as
   fresh at 30 days. `KeyPackageRefreshOverdueChanged` says to re-read it. Both
   are false and silent in release builds until the roster's spec lands.
+- Account workers automatically rejoin durably and natively `Unrecoverable`
+  group copies through an authenticated account-inbox handshake. A healthy
+  current admin device replaces only the authorized device leaf and sends a fresh
+  Welcome after Commit confirmation. Retry state survives interruption;
+  stored history remains. Each grant binds one coordinating device, even on
+  a shared account inbox. Usable forks still require explicit consent, and
+  removed members cannot use this path to reenter.
+  Explicit Repair rearms eligible parked episodes through the runtime's
+  authorization and budget checks.
 - An admin can turn on `marmot.group.account-devices.v1` in an existing group
   (mdk#2628). `AppClient::enable_account_devices` and
   `MarmotAppRuntime::enable_account_devices` send one admin Commit, only when
